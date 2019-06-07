@@ -10,4 +10,13 @@
         android:id="@+id/map"
         tools:context=".MapsActivity"
         android:name="com.google.android.gms.maps.SupportMapFragment" />
+    <Button
+      android:id="@+id/btMark"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="41dp"
+      android:layout_marginEnd="44dp"
+      android:layout_alignBottom="@+id/map"
+      android:layout_alignEnd="@+id/map"
+      android:text="Button"/>
 </RelativeLayout>

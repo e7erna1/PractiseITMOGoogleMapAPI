@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
@@ -14,9 +15,23 @@
       android:id="@+id/btMark"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_marginBottom="41dp"
-      android:layout_marginEnd="44dp"
+      android:layout_marginBottom="30dp"
+      android:layout_marginEnd="19dp"
       android:layout_alignBottom="@+id/map"
       android:layout_alignEnd="@+id/map"
-      android:text="Button"/>
+      android:text="Add Marker"/>
+    <EditText
+      android:id="@+id/editText"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="30dp"
+      android:layout_marginStart="18dp"
+      android:layout_marginEnd="25dp"
+      android:layout_alignBottom="@+id/map"
+      android:layout_alignStart="@+id/map"
+      android:layout_toStartOf="@+id/btMark"
+      android:ems="10"
+      android:gravity="start|top"
+      android:inputType="textMultiLine"
+      />
 </RelativeLayout>

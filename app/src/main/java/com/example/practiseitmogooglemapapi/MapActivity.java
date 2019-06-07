@@ -1,9 +1,10 @@
 package com.example.practiseitmogooglemapapi;
 
 import android.Manifest;
+import android.content.ContentValues;
 import android.content.pm.PackageManager;
-import android.location.Address;
-import android.location.Geocoder;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -19,7 +20,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -28,8 +28,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import java.io.IOException;
-import java.util.List;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -46,12 +44,31 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   Button geoLocationBt;
   Button satView;
   Button clear;
+  EditText editText;
+  MyDataBase myDataBase;
 
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_map);
     getLocationAcess();
+//    LatLng latLng;
+//    myDataBase = new MyDataBase(this);
+//
+//    SQLiteDatabase sqLiteDatabase = myDataBase.getWritableDatabase();
+//    Cursor cursor = sqLiteDatabase.query(MyDataBase.TABLE_NAME, null, null, null, null, null, null);
+//    if (cursor.moveToFirst()) {
+//      int idIndex = cursor.getColumnIndex(MyDataBase.KEY_ID);
+//      int latitude = cursor.getColumnIndex(MyDataBase.KEY_LATITUDE);
+//      int longitude = cursor.getColumnIndex(MyDataBase.KEY_LONGITUDE);
+//      int Snippet = cursor.getColumnIndex(MyDataBase.KEY_SNIPPET);
+//      do {
+//        Log.d("SOUT", + cursor.getInt(idIndex) + " " + cursor.getDouble(latitude) + " " + cursor.getDouble(longitude) + " " + cursor.getString(Snippet));
+//        latLng = new LatLng(cursor.getDouble(latitude), cursor.getDouble(longitude));
+//        gMap.addMarker(new MarkerOptions().position(latLng).title("New Marker.").snippet(cursor.getString(Snippet)));
+//      } while (cursor.moveToNext());
+//      cursor.close();
+//    }
 
 //    markBt = (Button) findViewById(R.id.btMark);
 //    markBt.setOnClickListener(new View.OnClickListener() {
@@ -95,8 +112,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   }
 
   private void initMap() {
-    SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager()
-        .findFragmentById(R.id.map);
+    SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
     assert supportMapFragment != null;
     supportMapFragment.getMapAsync(MapActivity.this);
   }
@@ -105,7 +121,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   public void onMapReady(GoogleMap googleMap) {
     gMap = googleMap;
     Toast.makeText(this, "Map is ready", Toast.LENGTH_SHORT).show();
-    //Current location
     if (access) {
       getDeviceLocation();
       if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -115,6 +130,24 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         return;
       }
       gMap.setMyLocationEnabled(true);
+    }
+
+    LatLng latLng;
+    myDataBase = new MyDataBase(this);
+
+    SQLiteDatabase sqLiteDatabase = myDataBase.getWritableDatabase();
+    Cursor cursor = sqLiteDatabase.query(MyDataBase.TABLE_NAME, null, null, null, null, null, null);
+    if (cursor.moveToFirst()) {
+      int idIndex = cursor.getColumnIndex(MyDataBase.KEY_ID);
+      int latitude = cursor.getColumnIndex(MyDataBase.KEY_LATITUDE);
+      int longitude = cursor.getColumnIndex(MyDataBase.KEY_LONGITUDE);
+      int Snippet = cursor.getColumnIndex(MyDataBase.KEY_SNIPPET);
+      do {
+        Log.d("SOUT", + cursor.getInt(idIndex) + " " + cursor.getDouble(latitude) + " " + cursor.getDouble(longitude) + " " + cursor.getString(Snippet));
+        latLng = new LatLng(cursor.getDouble(latitude), cursor.getDouble(longitude));
+        gMap.addMarker(new MarkerOptions().position(latLng).title("New Marker.").snippet(cursor.getString(Snippet)));
+      } while (cursor.moveToNext());
+      cursor.close();
     }
 
 //    gMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
@@ -138,22 +171,34 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     gMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
       @Override
       public void onMapClick(LatLng latLng) {
-         myLatlng = latLng;
+        myLatlng = latLng;
         Log.d(TAG, new MarkerOptions().position(latLng).toString());
       }
     });
 
     markBt = (Button) findViewById(R.id.btMark);
+    editText = (EditText) findViewById(R.id.editText);
     markBt.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-        LatLng myLocation = myLatlng;
-        gMap.addMarker(new MarkerOptions().position(myLocation).title("My Location"));
+
+        SQLiteDatabase sqLiteDatabase = myDataBase.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        gMap.addMarker(new MarkerOptions().position(myLatlng).title("This is new Marker.").snippet(editText.getText().toString()));
+        //System.out.println("Latting:" + myLatlng);
+        //System.out.println(myLatlng.latitude);
+        //System.out.println(myLatlng.longitude);
+        //LatLng latLng = new LatLng(myLatlng.latitude, myLatlng.longitude);
+        contentValues.put(MyDataBase.KEY_LATITUDE, myLatlng.latitude);
+        contentValues.put(MyDataBase.KEY_LONGITUDE, myLatlng.longitude);
+        contentValues.put(MyDataBase.KEY_SNIPPET, editText.getText().toString());
+        sqLiteDatabase.insert(MyDataBase.TABLE_NAME, null, contentValues);
+        editText.setText("");
       }
     });
-
-
   }
+
 
   private void getLocationAcess() {
     String[] acess = {

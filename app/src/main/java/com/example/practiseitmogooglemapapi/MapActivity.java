@@ -43,9 +43,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
   Button markBt;
   Button SCbutton;
-  //  Button geoLocationBt;
-//  Button satView;
-//  Button clear;
   EditText editText;
   EditText scText;
   MyDataBase myDataBase;
@@ -55,63 +52,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_map);
     getLocationAcess();
-//    LatLng latLng;
-//    myDataBase = new MyDataBase(this);
-//
-//    SQLiteDatabase sqLiteDatabase = myDataBase.getWritableDatabase();
-//    Cursor cursor = sqLiteDatabase.query(MyDataBase.TABLE_NAME, null, null, null, null, null, null);
-//    if (cursor.moveToFirst()) {
-//      int idIndex = cursor.getColumnIndex(MyDataBase.KEY_ID);
-//      int latitude = cursor.getColumnIndex(MyDataBase.KEY_LATITUDE);
-//      int longitude = cursor.getColumnIndex(MyDataBase.KEY_LONGITUDE);
-//      int Snippet = cursor.getColumnIndex(MyDataBase.KEY_SNIPPET);
-//      do {
-//        Log.d("SOUT", + cursor.getInt(idIndex) + " " + cursor.getDouble(latitude) + " " + cursor.getDouble(longitude) + " " + cursor.getString(Snippet));
-//        latLng = new LatLng(cursor.getDouble(latitude), cursor.getDouble(longitude));
-//        gMap.addMarker(new MarkerOptions().position(latLng).title("New Marker.").snippet(cursor.getString(Snippet)));
-//      } while (cursor.moveToNext());
-//      cursor.close();
-//    }
-
-//    markBt = (Button) findViewById(R.id.btMark);
-//    markBt.setOnClickListener(new View.OnClickListener() {
-//      @Override
-//      public void onClick(View view) {
-//        LatLng myLocation = new LatLng(myLatitude, myLongitude);
-//        gMap.addMarker(new MarkerOptions().position(myLocation).title("My Location"));
-//      }
-//    });
-
-//    geoLocationBt = (Button) findViewById(R.id.btSearch);
-//    geoLocationBt.setOnClickListener(new View.OnClickListener() {
-//      @Override
-//      public void onClick(View view) {
-//        EditText searchText = (EditText) findViewById(R.id.etLocationEntry);
-//        String search = searchText.getText().toString();
-//        if (search != null && !search.equals("")) {
-//          List<Address> addressList = null;
-//          Geocoder geocoder = new Geocoder(MapActivity.this);
-//          try {
-//            addressList = geocoder.getFromLocationName(search, 1);
-//          } catch (IOException e) {
-//            e.printStackTrace();
-//          }
-//          Address address = addressList.get(0);
-//          LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
-//          gMap.addMarker(new MarkerOptions().position(latLng).title("from geocoder"));
-//          gMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-//        }
-//      }
-//    });
-
-//    clear = (Button) findViewById(R.id.btClear);
-//    clear.setOnClickListener(new View.OnClickListener() {
-//      @Override
-//      public void onClick(View view) {
-//        gMap.clear();
-//      }
-//    });
-
   }
 
   private void initMap() {
@@ -157,24 +97,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
       cursor.close();
     }
 
-//    gMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-//      @Override
-//      public void onMapClick(LatLng latLng) {
-//        gMap.addMarker(new MarkerOptions().position(latLng).title("from onMapClick"));
-//        gMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-//        Log.d(TAG, new MarkerOptions().position(latLng).toString());
-//      }
-//    });
-
-//    markBt = (Button) findViewById(R.id.btMark);
-//    markBt.setOnClickListener(new View.OnClickListener() {
-//      @Override
-//      public void onClick(View view) {
-//        LatLng myLocation = new LatLng(myLatitude, myLongitude);
-//        gMap.addMarker(new MarkerOptions().position(myLocation).title("My Location"));
-//      }
-//    });
-
     gMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
       @Override
       public void onMapClick(LatLng latLng) {
@@ -188,12 +110,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     markBt.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-
         SQLiteDatabase sqLiteDatabase = myDataBase.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-
-        gMap.addMarker(new MarkerOptions().position(myLatlng).title("This is new Marker.")
-            .snippet(editText.getText().toString()));
+        gMap.addMarker(new MarkerOptions().position(myLatlng).title("This is new Marker.").snippet(editText.getText().toString()));
         contentValues.put(MyDataBase.KEY_LATITUDE, myLatlng.latitude);
         contentValues.put(MyDataBase.KEY_LONGITUDE, myLatlng.longitude);
         contentValues.put(MyDataBase.KEY_SNIPPET, editText.getText().toString());
@@ -211,7 +130,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         ContentValues contentValues = new ContentValues();
         String scSnipper = "%" + scText.getText().toString() + "%";
         System.out.println(scSnipper);
-        Cursor cursor1 = sqLiteDatabase.rawQuery("SELECT * FROM 'MainTable' WHERE Snippet LIKE  ?", new String[]{scSnipper});
+        Cursor cursor1 = sqLiteDatabase
+            .rawQuery("SELECT * FROM 'MainTable' WHERE Snippet LIKE  ?", new String[]{scSnipper});
 
         if (cursor1 != null) {
           try {
@@ -234,9 +154,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
       }
     });
-
   }
-
 
   private void getLocationAcess() {
     String[] acess = {

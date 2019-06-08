@@ -23,18 +23,17 @@
       android:text="Add Marker"/>
     <EditText
       android:id="@+id/scText"
-      android:layout_width="wrap_content"
+      android:layout_width="139dp"
       android:layout_height="wrap_content"
-      android:layout_marginBottom="729dp"
-      android:layout_marginStart="49dp"
-      android:layout_marginEnd="22dp"
-      android:layout_alignBottom="@+id/map"
+      android:layout_marginBottom="35dp"
+      android:layout_marginStart="86dp"
+      android:layout_marginEnd="38dp"
+      android:layout_above="@+id/editText"
       android:layout_alignStart="@+id/map"
       android:layout_toStartOf="@+id/SCbutton"
       android:ems="10"
       android:gravity="start|top"
-      android:inputType="text"
-      />
+      android:inputType="text"/>
     <EditText
       android:id="@+id/editText"
       android:layout_width="wrap_content"
@@ -53,10 +52,11 @@
       android:id="@+id/SCbutton"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_marginTop="10dp"
+      android:layout_marginTop="621dp"
+      android:layout_marginBottom="38dp"
       android:layout_marginStart="34dp"
-      android:layout_marginEnd="19dp"
+      android:layout_marginEnd="42dp"
+      android:layout_above="@+id/btMark"
       android:layout_alignEnd="@+id/map"
-      android:layout_alignTop="@+id/map"
       android:text="Search"/>
 </RelativeLayout>

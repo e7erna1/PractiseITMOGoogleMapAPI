@@ -2,15 +2,16 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+  android:theme="@android:style/Theme.Black.NoTitleBar">
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/map"
-        tools:context=".MapsActivity"
-        android:name="com.google.android.gms.maps.SupportMapFragment" />
+      xmlns:tools="http://schemas.android.com/tools"
+      android:id="@+id/map"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:name="com.google.android.gms.maps.SupportMapFragment"
+      tools:context=".MapsActivity"/>
     <Button
       android:id="@+id/btMark"
       android:layout_width="wrap_content"
@@ -21,12 +22,26 @@
       android:layout_alignEnd="@+id/map"
       android:text="Add Marker"/>
     <EditText
+      android:id="@+id/scText"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="729dp"
+      android:layout_marginStart="49dp"
+      android:layout_marginEnd="22dp"
+      android:layout_alignBottom="@+id/map"
+      android:layout_alignStart="@+id/map"
+      android:layout_toStartOf="@+id/SCbutton"
+      android:ems="10"
+      android:gravity="start|top"
+      android:inputType="text"
+      />
+    <EditText
       android:id="@+id/editText"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_marginBottom="30dp"
-      android:layout_marginStart="18dp"
-      android:layout_marginEnd="25dp"
+      android:layout_marginBottom="28dp"
+      android:layout_marginStart="15dp"
+      android:layout_marginEnd="28dp"
       android:layout_alignBottom="@+id/map"
       android:layout_alignStart="@+id/map"
       android:layout_toStartOf="@+id/btMark"
@@ -34,4 +49,14 @@
       android:gravity="start|top"
       android:inputType="textMultiLine"
       />
+    <Button
+      android:id="@+id/SCbutton"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="10dp"
+      android:layout_marginStart="34dp"
+      android:layout_marginEnd="19dp"
+      android:layout_alignEnd="@+id/map"
+      android:layout_alignTop="@+id/map"
+      android:text="Search"/>
 </RelativeLayout>

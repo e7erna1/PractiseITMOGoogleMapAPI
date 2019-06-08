@@ -14,6 +14,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -41,10 +42,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   public static LatLng myLatlng = null;
 
   Button markBt;
-  Button geoLocationBt;
-  Button satView;
-  Button clear;
+  Button scBt;
+  //  Button geoLocationBt;
+//  Button satView;
+//  Button clear;
   EditText editText;
+  EditText scText;
   MyDataBase myDataBase;
 
   @Override
@@ -112,7 +115,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   }
 
   private void initMap() {
-    SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+    SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager()
+        .findFragmentById(R.id.map);
     assert supportMapFragment != null;
     supportMapFragment.getMapAsync(MapActivity.this);
   }
@@ -136,14 +140,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     myDataBase = new MyDataBase(this);
 
     SQLiteDatabase sqLiteDatabase = myDataBase.getWritableDatabase();
-    Cursor cursor = sqLiteDatabase.query(MyDataBase.TABLE_NAME, null, null, null, null, null, null);
+    final Cursor cursor = sqLiteDatabase.query(MyDataBase.TABLE_NAME, null, null, null, null, null, null);
     if (cursor.moveToFirst()) {
       int idIndex = cursor.getColumnIndex(MyDataBase.KEY_ID);
       int latitude = cursor.getColumnIndex(MyDataBase.KEY_LATITUDE);
       int longitude = cursor.getColumnIndex(MyDataBase.KEY_LONGITUDE);
       int Snippet = cursor.getColumnIndex(MyDataBase.KEY_SNIPPET);
       do {
-        Log.d("SOUT", + cursor.getInt(idIndex) + " " + cursor.getDouble(latitude) + " " + cursor.getDouble(longitude) + " " + cursor.getString(Snippet));
+        Log.d("SOUT", +cursor.getInt(idIndex) + " " + cursor.getDouble(latitude) + " " + cursor.getDouble(longitude) + " " + cursor.getString(Snippet));
         latLng = new LatLng(cursor.getDouble(latitude), cursor.getDouble(longitude));
         gMap.addMarker(new MarkerOptions().position(latLng).title("New Marker.").snippet(cursor.getString(Snippet)));
       } while (cursor.moveToNext());
@@ -197,6 +201,40 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         editText.setText("");
       }
     });
+/*
+    scBt = (Button) findViewById(R.id.SCbutton);
+    scText = (EditText) findViewById(R.id.scText);
+    scBt.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        editText.setText("QQQQQQ");
+        SQLiteDatabase sqLiteDatabase = myDataBase.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        String scSnipper = scText.getText().toString();
+
+        Cursor cursor1 = sqLiteDatabase
+            .rawQuery("SELECT * FROM DATABASE_NAME WHERE KEY_SNIPPET LIKE '%&scSnipper%'", null);
+        if (cursor1 != null) {
+          try {
+            if (cursor1.moveToFirst()) {
+
+              int latitude = cursor.getColumnIndex(MyDataBase.KEY_LATITUDE);
+              int longitude = cursor.getColumnIndex(MyDataBase.KEY_LONGITUDE);
+              int Snippet = cursor.getColumnIndex(MyDataBase.KEY_SNIPPET);
+              do {
+                System.out.println(cursor1.getDouble(latitude));
+                System.out.println(cursor1.getDouble(longitude));
+                System.out.println(cursor1.getString(Snippet));
+
+              } while (cursor1.moveToNext());
+            }
+          } finally {
+            cursor1.close();
+          }
+        }
+      }
+    });
+*/
   }
 
 

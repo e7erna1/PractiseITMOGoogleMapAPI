@@ -41,7 +41,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   private static final String TAG = "MapActivity";
   private static boolean access = false;
   private static final int acessCode = 1234;
-  private static GoogleMap gMap;
+  static GoogleMap gMap;
   private static FusedLocationProviderClient fusedLocationProviderClient;
   public static Double myLatitude = null;
   public static Double myLongitude = null;
@@ -49,6 +49,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
   private ArrayList<String> mImageURLs = new ArrayList<>();
   private ArrayList<String> mImages = new ArrayList<>();
+  private ArrayList<Double> mLatitude = new ArrayList<>();
+  private ArrayList<Double> mLongitude = new ArrayList<>();
+
 
   Button markBt;
   Button SCbutton;
@@ -57,6 +60,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   MyDataBase myDataBase;
   RecyclerView recyclerView;
 
+  Map<Integer, Double> map1;
+  Map<Integer, Double> map2;
+  Map<Integer, String> map3;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -64,24 +71,24 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     getLocationAcess();
   }
 
-  private void initImage(String name) {
+  private void initImage(String name, double myLatitude, double myLongitude) {
     final String url = "https://banner2.kisspng.com/20180405/xwe/kisspng-google-map-maker-google-maps-computer-icons-map-co-map-marker-5ac6446cc7bc26.3264700815229430848181.jpg";
-    System.out.println("NAME" + name);
     mImageURLs.add(url);
     mImages.add(name);
+    mLatitude.add(myLatitude);
+    mLongitude.add(myLongitude);
     initRecycleView();
   }
 
-  private void initRecycleView() {
+  void initRecycleView() {
     RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycle_view);
-    RecycleViewAdapter adapter = new RecycleViewAdapter(mImages, mImageURLs, this);
+    RecycleViewAdapter adapter = new RecycleViewAdapter(mImages, mImageURLs, this, mLatitude, mLongitude, this);
     recyclerView.setAdapter(adapter);
     recyclerView.setLayoutManager(new LinearLayoutManager(this));
   }
 
-  private void initMap() {
-    SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager()
-        .findFragmentById(R.id.map);
+  void initMap() {
+    SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
     assert supportMapFragment != null;
     supportMapFragment.getMapAsync(MapActivity.this);
   }
@@ -148,16 +155,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     SCbutton = (Button) findViewById(R.id.SCbutton);
     scText = (EditText) findViewById(R.id.scText);
-    //listView = (ListView) findViewById(R.id.recycle_view);
     SCbutton.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
         SQLiteDatabase sqLiteDatabase = myDataBase.getWritableDatabase();
         String scSnipper = "%" + scText.getText().toString() + "%";
 
-        Map<Integer, Double> map1 = new HashMap<>();
-        Map<Integer, Double> map2 = new HashMap<>();
-        Map<Integer, String> map3 = new HashMap<>();
+        map1 = new HashMap<>();
+        map2 = new HashMap<>();
+        map3 = new HashMap<>();
 
         Cursor cursor1 = sqLiteDatabase
             .rawQuery("SELECT * FROM 'MainTable' WHERE Snippet LIKE  ?", new String[]{scSnipper});
@@ -179,16 +185,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 map3.put(cursor1.getInt(_id), cursor1.getString(Snippet));
 
               } while (cursor1.moveToNext());
-
             }
           } finally {
             cursor1.close();
           }
         }
-        for (Entry<Integer, String> entry : map3.entrySet()) {
-          initImage(entry.getValue());
+        for (int i : map1.keySet()) {
+          initImage(map3.get(i), map1.get(i), map2.get(i));
         }
-
       }
     });
   }
@@ -241,14 +245,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
   }
 
-  private void moveCamera(LatLng latLng) {
+  void moveCamera(LatLng latLng) {
     Log.d(TAG, "Moving camera to");
     gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, (float) 15.0));
   }
 
   @Override
-  public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-      @NonNull int[] grantResults) {
+  public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
     access = false;
     switch (requestCode) {
       case acessCode: {

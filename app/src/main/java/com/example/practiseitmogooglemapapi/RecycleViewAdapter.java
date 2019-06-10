@@ -1,5 +1,7 @@
 package com.example.practiseitmogooglemapapi;
 
+import static com.example.practiseitmogooglemapapi.MapActivity.gMap;
+
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,6 +12,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.bumptech.glide.Glide;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.LatLng;
 import de.hdodenhof.circleimageview.CircleImageView;
 import java.util.ArrayList;
 
@@ -17,30 +21,40 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
 
   private ArrayList<String> mImageName = new ArrayList<>();
   private ArrayList<String> mImage = new ArrayList<>();
+  private ArrayList<Double> mlatitude = new ArrayList<>();
+  private ArrayList<Double> mlongitude = new ArrayList<>();
   private Context mContext;
+  MapActivity mmapActivity;
 
-  public RecycleViewAdapter(ArrayList<String> ImageName, ArrayList<String> Image, Context Context) {
+  public RecycleViewAdapter(ArrayList<String> ImageName, ArrayList<String> Image, Context Context, ArrayList<Double> latitude, ArrayList<Double> longitude, MapActivity mapActivity) {
     mImageName = ImageName;
     mImage = Image;
     mContext = Context;
+    mlatitude = latitude;
+    mlongitude = longitude;
+    mmapActivity = mapActivity;
   }
 
   @Override
   public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-    View view = LayoutInflater.from(viewGroup.getContext())
-        .inflate(R.layout.layout_kistitem, viewGroup, false);
-    ViewHolder viewHolder = new ViewHolder(view);
-    return viewHolder;
+    View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.layout_kistitem, viewGroup, false);
+    return new ViewHolder(view);
   }
 
   @Override
-  public void onBindViewHolder(ViewHolder viewHolder, int i) {
+  public void onBindViewHolder(final ViewHolder viewHolder, final int i) {
     Glide.with(mContext).asBitmap().load(mImage.get(i)).into(viewHolder.circleImageView);
     viewHolder.textView.setText(mImageName.get(i));
     viewHolder.relativeLayout.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        Toast.makeText(mContext, "weq", Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext, "The map is on: " + mImageName.get(i), Toast.LENGTH_SHORT).show();
+        gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mlatitude.get(i), mlongitude.get(i)), (float) 15.0));
+        mImageName.clear();
+        mImage.clear();
+        mlatitude.clear();
+        mlongitude.clear();
+        mmapActivity.initRecycleView();
       }
     });
   }

@@ -60,9 +60,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   MyDataBase myDataBase;
   RecyclerView recyclerView;
 
-  Map<Integer, Double> map1;
-  Map<Integer, Double> map2;
-  Map<Integer, String> map3;
+  Map<Integer, Double> map1 = new HashMap<>();
+  Map<Integer, Double> map2 = new HashMap<>();
+  Map<Integer, String> map3 = new HashMap<>();
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -161,9 +161,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         SQLiteDatabase sqLiteDatabase = myDataBase.getWritableDatabase();
         String scSnipper = "%" + scText.getText().toString() + "%";
 
-        map1 = new HashMap<>();
-        map2 = new HashMap<>();
-        map3 = new HashMap<>();
+        map1.clear();
+        map2.clear();
+        map3.clear();
+        mImageURLs.clear();
+        mImages.clear();
+        mLatitude.clear();
+        mLongitude.clear();
+        initRecycleView();
 
         Cursor cursor1 = sqLiteDatabase
             .rawQuery("SELECT * FROM 'MainTable' WHERE Snippet LIKE  ?", new String[]{scSnipper});
@@ -175,15 +180,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
               int longitude = cursor1.getColumnIndex(MyDataBase.KEY_LONGITUDE);
               int Snippet = cursor1.getColumnIndex(MyDataBase.KEY_SNIPPET);
               do {
-//                System.out.println();
-//                System.out.println("OUTPUT " + cursor1.getDouble(latitude));
-//                System.out.println("OUTPUT " + cursor1.getDouble(longitude));
-//                System.out.println("OUTPUT " + cursor1.getString(Snippet));
-//
                 map1.put(cursor1.getInt(_id), cursor1.getDouble(latitude));
                 map2.put(cursor1.getInt(_id), cursor1.getDouble(longitude));
                 map3.put(cursor1.getInt(_id), cursor1.getString(Snippet));
-
               } while (cursor1.moveToNext());
             }
           } finally {

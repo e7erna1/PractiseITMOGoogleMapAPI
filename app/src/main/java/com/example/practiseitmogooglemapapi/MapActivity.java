@@ -42,7 +42,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   private static boolean access = false;
   private static final int acessCode = 1234;
   static GoogleMap gMap;
-  private static FusedLocationProviderClient fusedLocationProviderClient;
+  private FusedLocationProviderClient fusedLocationProviderClient;
   public static Double myLatitude = null;
   public static Double myLongitude = null;
   public static LatLng myLatlng = null;
@@ -58,6 +58,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   EditText editText;
   EditText scText;
   MyDataBase myDataBase;
+
   RecyclerView recyclerView;
 
   Map<Integer, Double> map1 = new HashMap<>();
@@ -160,6 +161,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
       public void onClick(View v) {
         SQLiteDatabase sqLiteDatabase = myDataBase.getWritableDatabase();
         String scSnipper = "%" + scText.getText().toString() + "%";
+
+        recyclerView = (RecyclerView) findViewById(R.id.recycle_view);
+        recyclerView.setVisibility(View.VISIBLE);
 
         map1.clear();
         map2.clear();

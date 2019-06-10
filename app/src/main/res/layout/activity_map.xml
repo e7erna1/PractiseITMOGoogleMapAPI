@@ -16,6 +16,7 @@
     android:layout_alignParentTop="true"
     android:layout_toStartOf="@+id/SCbutton"
     android:gravity="start|top"
+    android:hint="@string/SText"
     android:inputType="text"/>
   <Button
     android:id="@+id/SCbutton"
@@ -26,7 +27,7 @@
     android:layout_marginEnd="4dp"
     android:layout_alignParentEnd="true"
     android:layout_alignParentTop="true"
-    android:text="Search"/>
+    android:text="@string/search"/>
   <fragment
     android:id="@+id/map"
     android:layout_width="match_parent"
@@ -48,7 +49,8 @@
     android:layout_marginTop="0dp"
     android:layout_marginStart="0dp"
     android:layout_alignStart="@+id/map"
-    android:layout_alignTop="@+id/map"/>
+    android:layout_alignTop="@+id/map"
+    android:visibility="gone"/>
   <EditText
     android:id="@+id/editText"
     android:layout_width="216dp"
@@ -61,6 +63,7 @@
     android:layout_toStartOf="@+id/btMark"
     android:ems="10"
     android:gravity="start|top"
+    android:hint="@string/InText"
     android:inputType="textMultiLine"/>
   <Button
     android:id="@+id/btMark"
@@ -70,5 +73,5 @@
     android:layout_marginEnd="5dp"
     android:layout_alignEnd="@+id/map"
     android:layout_alignParentBottom="true"
-    android:text="Add Marker"/>
+    android:text="@string/add_marker"/>
 </RelativeLayout>

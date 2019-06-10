@@ -54,6 +54,7 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
         mImage.clear();
         mlatitude.clear();
         mlongitude.clear();
+        mmapActivity.recyclerView.setVisibility(View.GONE);
         mmapActivity.initRecycleView();
       }
     });

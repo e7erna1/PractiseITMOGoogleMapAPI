@@ -3,6 +3,7 @@ package com.example.practiseitmogooglemapapi;
 import static com.example.practiseitmogooglemapapi.MapActivity.gMap;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,14 +20,15 @@ import java.util.ArrayList;
 
 public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.ViewHolder> {
 
-  private ArrayList<String> mImageName = new ArrayList<>();
-  private ArrayList<String> mImage = new ArrayList<>();
-  private ArrayList<Double> mlatitude = new ArrayList<>();
-  private ArrayList<Double> mlongitude = new ArrayList<>();
+  private ArrayList<String> mImageName;
+  private ArrayList<String> mImage;
+  private ArrayList<Double> mlatitude;
+  private ArrayList<Double> mlongitude;
   private Context mContext;
-  MapActivity mmapActivity;
+  private MapActivity mmapActivity;
 
-  public RecycleViewAdapter(ArrayList<String> ImageName, ArrayList<String> Image, Context Context, ArrayList<Double> latitude, ArrayList<Double> longitude, MapActivity mapActivity) {
+  RecycleViewAdapter(ArrayList<String> ImageName, ArrayList<String> Image, Context Context,
+      ArrayList<Double> latitude, ArrayList<Double> longitude, MapActivity mapActivity) {
     mImageName = ImageName;
     mImage = Image;
     mContext = Context;
@@ -35,21 +37,24 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
     mmapActivity = mapActivity;
   }
 
+  @NonNull
   @Override
-  public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-    View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.layout_kistitem, viewGroup, false);
+  public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    View view = LayoutInflater.from(viewGroup.getContext())
+        .inflate(R.layout.layout_kistitem, viewGroup, false);
     return new ViewHolder(view);
   }
 
   @Override
-  public void onBindViewHolder(final ViewHolder viewHolder, final int i) {
+  public void onBindViewHolder(@NonNull final ViewHolder viewHolder, final int i) {
     Glide.with(mContext).asBitmap().load(mImage.get(i)).into(viewHolder.circleImageView);
     viewHolder.textView.setText(mImageName.get(i));
     viewHolder.relativeLayout.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
         Toast.makeText(mContext, "The map is on: " + mImageName.get(i), Toast.LENGTH_SHORT).show();
-        gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mlatitude.get(i), mlongitude.get(i)), (float) 15.0));
+        gMap.moveCamera(CameraUpdateFactory
+            .newLatLngZoom(new LatLng(mlatitude.get(i), mlongitude.get(i)), (float) 15.0));
         mImageName.clear();
         mImage.clear();
         mlatitude.clear();
@@ -65,13 +70,13 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
     return mImageName.size();
   }
 
-  public class ViewHolder extends RecyclerView.ViewHolder {
+  class ViewHolder extends RecyclerView.ViewHolder {
 
     CircleImageView circleImageView;
     TextView textView;
     RelativeLayout relativeLayout;
 
-    public ViewHolder(View itemView) {
+    ViewHolder(View itemView) {
       super(itemView);
       circleImageView = itemView.findViewById(R.id.image);
       textView = itemView.findViewById(R.id.image_name);

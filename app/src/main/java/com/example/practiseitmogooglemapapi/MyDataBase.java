@@ -6,23 +6,22 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class MyDataBase extends SQLiteOpenHelper {
 
-  public static final int DATABASE_VERSION = 1;
-  public static final String DATABASE_NAME = "Database";
-  public static final String TABLE_NAME = "MainTable";
+  private static final int DATABASE_VERSION = 1;
+  private static final String DATABASE_NAME = "Database";
+  static final String TABLE_NAME = "MainTable";
+  static final String KEY_ID = "_id";
+  static final String KEY_LATITUDE = "latitude";
+  static final String KEY_LONGITUDE = "longitude";
+  static final String KEY_SNIPPET = "Snippet";
 
-  public static final String KEY_ID = "_id";
-  public static final String KEY_LATITUDE = "latitude";
-  public static final String KEY_LONGITUDE = "longitude";
-  public static final String KEY_SNIPPET = "Snippet";
-
-  public MyDataBase(Context context) {
+  MyDataBase(Context context) {
     super(context, DATABASE_NAME, null, DATABASE_VERSION);
   }
 
   @Override
   public void onCreate(SQLiteDatabase db) {
-    db.execSQL(
-        "create table " + TABLE_NAME + "(" + KEY_ID + " integer primary key, " + KEY_LATITUDE + " real," + KEY_LONGITUDE + " real," + KEY_SNIPPET + " text" + ")");
+    db.execSQL("create table " + TABLE_NAME + "(" + KEY_ID + " integer primary key, " + KEY_LATITUDE
+        + " real," + KEY_LONGITUDE + " real," + KEY_SNIPPET + " text" + ")");
   }
 
   @Override

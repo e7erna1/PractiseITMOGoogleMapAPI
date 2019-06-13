@@ -19,7 +19,6 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -32,9 +31,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -42,9 +39,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   private static boolean access = false;
   private static final int acessCode = 1234;
   static GoogleMap gMap;
-  private FusedLocationProviderClient fusedLocationProviderClient;
-  public static Double myLatitude = null;
-  public static Double myLongitude = null;
   public static LatLng myLatlng = null;
 
   private ArrayList<String> mImageURLs = new ArrayList<>();
@@ -61,9 +55,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
   RecyclerView recyclerView;
 
-  Map<Integer, Double> map1 = new HashMap<>();
-  Map<Integer, Double> map2 = new HashMap<>();
-  Map<Integer, String> map3 = new HashMap<>();
+  Map<Integer, Double> map1 = new HashMap<Integer, Double>();
+  Map<Integer, Double> map2 = new HashMap<Integer, Double>();
+  Map<Integer, String> map3 = new HashMap<Integer, String>();
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -83,13 +77,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
   void initRecycleView() {
     RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycle_view);
-    RecycleViewAdapter adapter = new RecycleViewAdapter(mImages, mImageURLs, this, mLatitude, mLongitude, this);
+    RecycleViewAdapter adapter = new RecycleViewAdapter(mImages, mImageURLs, this, mLatitude,
+        mLongitude, this);
     recyclerView.setAdapter(adapter);
     recyclerView.setLayoutManager(new LinearLayoutManager(this));
   }
 
   void initMap() {
-    SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+    SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager()
+        .findFragmentById(R.id.map);
     assert supportMapFragment != null;
     supportMapFragment.getMapAsync(MapActivity.this);
   }
@@ -108,21 +104,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
       }
       gMap.setMyLocationEnabled(true);
     }
-
     LatLng latLng;
     myDataBase = new MyDataBase(this);
-
     SQLiteDatabase sqLiteDatabase = myDataBase.getWritableDatabase();
     final Cursor cursor = sqLiteDatabase
         .query(MyDataBase.TABLE_NAME, null, null, null, null, null, null);
     if (cursor.moveToFirst()) {
-      int idIndex = cursor.getColumnIndex(MyDataBase.KEY_ID);
       int latitude = cursor.getColumnIndex(MyDataBase.KEY_LATITUDE);
       int longitude = cursor.getColumnIndex(MyDataBase.KEY_LONGITUDE);
       int Snippet = cursor.getColumnIndex(MyDataBase.KEY_SNIPPET);
       do {
-        Log.d("SOUT", +cursor.getInt(idIndex) + " " + cursor.getDouble(latitude) + " " + cursor
-            .getDouble(longitude) + " " + cursor.getString(Snippet));
         latLng = new LatLng(cursor.getDouble(latitude), cursor.getDouble(longitude));
         gMap.addMarker(new MarkerOptions().position(latLng).title("New Marker.")
             .snippet(cursor.getString(Snippet)));
@@ -221,8 +212,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   }
 
   private void getDeviceLocation() {
-    Log.d(TAG, "get device location: getting current device location");
-    fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+    FusedLocationProviderClient fusedLocationProviderClient = LocationServices
+        .getFusedLocationProviderClient(this);
     try {
       if (access) {
         final Task tasks = fusedLocationProviderClient.getLastLocation();
@@ -230,13 +221,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
           @Override
           public void onComplete(@NonNull Task task) {
             if (task.isSuccessful()) {
-              Log.d(TAG, "get device location: found location");
               Location location = (Location) task.getResult();
               if (location != null) {
                 moveCamera(new LatLng(location.getLatitude(), location.getLongitude()));
               }
             } else {
-              Log.d(TAG, "get device location: cant find location");
               Toast.makeText(MapActivity.this, "Cant find current location", Toast.LENGTH_SHORT)
                   .show();
             }
@@ -249,25 +238,22 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   }
 
   void moveCamera(LatLng latLng) {
-    Log.d(TAG, "Moving camera to");
     gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, (float) 15.0));
   }
 
   @Override
-  public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+  public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+      @NonNull int[] grantResults) {
     access = false;
-    switch (requestCode) {
-      case acessCode: {
-        if (grantResults.length > 0) {
-          for (int ints : grantResults) {
-            if (ints != PackageManager.PERMISSION_GRANTED) {
-              access = false;
-              return;
-            }
+    if (requestCode == acessCode) {
+      if (grantResults.length > 0) {
+        for (int ints : grantResults) {
+          if (ints != PackageManager.PERMISSION_GRANTED) {
+            return;
           }
-          access = true;
-          initMap();
         }
+        access = true;
+        initMap();
       }
     }
   }

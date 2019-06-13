@@ -13,11 +13,12 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.util.SparseArray;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.SearchView;
 import android.widget.Toast;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -30,16 +31,13 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
-  private static final String TAG = "MapActivity";
   private static boolean access = false;
   private static final int acessCode = 1234;
   static GoogleMap gMap;
-  public static LatLng myLatlng = null;
+  private static LatLng myLatlng = null;
 
   private ArrayList<String> mImageURLs = new ArrayList<>();
   private ArrayList<String> mImages = new ArrayList<>();
@@ -47,17 +45,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   private ArrayList<Double> mLongitude = new ArrayList<>();
 
 
-  Button markBt;
-  Button SCbutton;
-  EditText editText;
-  EditText scText;
-  MyDataBase myDataBase;
+  private EditText editText;
+  private SearchView Search_view;
+  private MyDataBase myDataBase;
 
   RecyclerView recyclerView;
 
-  Map<Integer, Double> map1 = new HashMap<Integer, Double>();
-  Map<Integer, Double> map2 = new HashMap<Integer, Double>();
-  Map<Integer, String> map3 = new HashMap<Integer, String>();
+  private SparseArray<Double> sparseArray1 = new SparseArray<>();
+  private SparseArray<Double> sparseArray2 = new SparseArray<>();
+  private SparseArray<String> sparseArray3 = new SparseArray<>();
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -76,14 +72,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   }
 
   void initRecycleView() {
-    RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycle_view);
+    RecyclerView recyclerView = findViewById(R.id.recycle_view);
     RecycleViewAdapter adapter = new RecycleViewAdapter(mImages, mImageURLs, this, mLatitude,
         mLongitude, this);
     recyclerView.setAdapter(adapter);
     recyclerView.setLayoutManager(new LinearLayoutManager(this));
   }
 
-  void initMap() {
+  private void initMap() {
     SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager()
         .findFragmentById(R.id.map);
     assert supportMapFragment != null;
@@ -125,11 +121,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
       @Override
       public void onMapClick(LatLng latLng) {
         myLatlng = latLng;
-        Log.d(TAG, new MarkerOptions().position(latLng).toString());
       }
     });
-    markBt = (Button) findViewById(R.id.btMark);
-    editText = (EditText) findViewById(R.id.editText);
+    Button markBt = findViewById(R.id.btMark);
+    editText = findViewById(R.id.editText);
     markBt.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
@@ -145,20 +140,22 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
       }
     });
 
-    SCbutton = (Button) findViewById(R.id.SCbutton);
-    scText = (EditText) findViewById(R.id.scText);
+    Button SCbutton = findViewById(R.id.SCbutton);
+    Search_view = findViewById(R.id.Search_view);
     SCbutton.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
         SQLiteDatabase sqLiteDatabase = myDataBase.getWritableDatabase();
-        String scSnipper = "%" + scText.getText().toString() + "%";
+        String scSnipper = "%" + Search_view.getQuery().toString() + "%";
+        System.out.println(scSnipper);
 
-        recyclerView = (RecyclerView) findViewById(R.id.recycle_view);
+        recyclerView = findViewById(R.id.recycle_view);
         recyclerView.setVisibility(View.VISIBLE);
 
-        map1.clear();
-        map2.clear();
-        map3.clear();
+        sparseArray1.clear();
+        sparseArray2.clear();
+        sparseArray3.clear();
+
         mImageURLs.clear();
         mImages.clear();
         mLatitude.clear();
@@ -175,17 +172,18 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
               int longitude = cursor1.getColumnIndex(MyDataBase.KEY_LONGITUDE);
               int Snippet = cursor1.getColumnIndex(MyDataBase.KEY_SNIPPET);
               do {
-                map1.put(cursor1.getInt(_id), cursor1.getDouble(latitude));
-                map2.put(cursor1.getInt(_id), cursor1.getDouble(longitude));
-                map3.put(cursor1.getInt(_id), cursor1.getString(Snippet));
+                sparseArray1.put(cursor1.getInt(_id), cursor1.getDouble(latitude));
+                sparseArray2.put(cursor1.getInt(_id), cursor1.getDouble(longitude));
+                sparseArray3.put(cursor1.getInt(_id), cursor1.getString(Snippet));
               } while (cursor1.moveToNext());
             }
           } finally {
             cursor1.close();
           }
         }
-        for (int i : map1.keySet()) {
-          initImage(map3.get(i), map1.get(i), map2.get(i));
+        for (int i = 0; i < sparseArray1.size(); i++) {
+          int key = sparseArray1.keyAt(i);
+          initImage(sparseArray3.get(key), sparseArray1.get(key), sparseArray2.get(key));
         }
       }
     });
@@ -232,12 +230,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
           }
         });
       }
-    } catch (SecurityException securetyException) {
-      Log.e(TAG, "get device location: exception" + securetyException.getMessage());
+    } catch (SecurityException ignored) {
     }
   }
 
-  void moveCamera(LatLng latLng) {
+  private void moveCamera(LatLng latLng) {
     gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, (float) 15.0));
   }
 

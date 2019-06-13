@@ -2,6 +2,7 @@ package com.example.practiseitmogooglemapapi;
 
 import static com.example.practiseitmogooglemapapi.MapActivity.gMap;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -46,7 +47,7 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
   }
 
   @Override
-  public void onBindViewHolder(@NonNull final ViewHolder viewHolder, final int i) {
+  public void onBindViewHolder(@NonNull final ViewHolder viewHolder, @SuppressLint("RecyclerView") final int i) {
     Glide.with(mContext).asBitmap().load(mImage.get(i)).into(viewHolder.circleImageView);
     viewHolder.textView.setText(mImageName.get(i));
     viewHolder.relativeLayout.setOnClickListener(new OnClickListener() {

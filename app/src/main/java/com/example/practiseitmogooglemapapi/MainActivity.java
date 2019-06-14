@@ -24,12 +24,13 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void inti() {
-    Button button = (Button) findViewById(R.id.start_button);
+    Button button = findViewById(R.id.start_button);
     button.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
         Intent intent = new Intent(MainActivity.this, MapActivity.class);
         startActivity(intent);
+
       }
     });
   }

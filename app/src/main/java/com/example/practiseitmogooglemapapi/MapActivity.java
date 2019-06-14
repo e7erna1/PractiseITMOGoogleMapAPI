@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.SearchView;
 import android.widget.Toast;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -30,8 +31,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -47,7 +46,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
 
   private EditText editText;
-  private EditText scText;
+  private SearchView Search_view;
   private MyDataBase myDataBase;
 
   RecyclerView recyclerView;
@@ -73,7 +72,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   }
 
   void initRecycleView() {
-    RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycle_view);
+    RecyclerView recyclerView = findViewById(R.id.recycle_view);
     RecycleViewAdapter adapter = new RecycleViewAdapter(mImages, mImageURLs, this, mLatitude,
         mLongitude, this);
     recyclerView.setAdapter(adapter);
@@ -124,8 +123,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         myLatlng = latLng;
       }
     });
-    Button markBt = (Button) findViewById(R.id.btMark);
-    editText = (EditText) findViewById(R.id.editText);
+    Button markBt = findViewById(R.id.btMark);
+    editText = findViewById(R.id.editText);
     markBt.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
@@ -141,15 +140,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
       }
     });
 
-    Button SCbutton = (Button) findViewById(R.id.SCbutton);
-    scText = (EditText) findViewById(R.id.scText);
+    Button SCbutton = findViewById(R.id.SCbutton);
+    Search_view = findViewById(R.id.Search_view);
     SCbutton.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
         SQLiteDatabase sqLiteDatabase = myDataBase.getWritableDatabase();
-        String scSnipper = "%" + scText.getText().toString() + "%";
+        String scSnipper = "%" + Search_view.getQuery().toString() + "%";
+        System.out.println(scSnipper);
 
-        recyclerView = (RecyclerView) findViewById(R.id.recycle_view);
+        recyclerView = findViewById(R.id.recycle_view);
         recyclerView.setVisibility(View.VISIBLE);
 
         sparseArray1.clear();

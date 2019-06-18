@@ -1,9 +1,9 @@
 <resources>
-    <string name="app_name">PractiseITMOGoogleMapAPI</string>
-    <string name="google_maps_api_key">AIzaSyBPzUYWB8mjN3kZFKGYwtcHF_sPh0xQB5w</string>
-    <string name="button_name">Start the map</string>
-  <string name="SText">Введите подстроку.</string>
-  <string name="InText">Введите текст для новой точки.</string>
+  <string name="app_name">PractiseITMOGoogleMapAPI</string>
+  <string name="google_maps_api_key">AIzaSyBPzUYWB8mjN3kZFKGYwtcHF_sPh0xQB5w</string>
+  <string name="button_name">Start the map</string>
+  <string name="SText"> Введите подстроку.</string>
+  <string name="InText"> Введите текст для новой точки.</string>
   <string name="add_marker">Add Marker</string>
   <string name="search">Search</string>
 </resources>

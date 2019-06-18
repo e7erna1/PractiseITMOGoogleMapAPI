@@ -1,79 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
-  android:layout_height="match_parent"
-  android:theme="@android:style/Theme.Black.NoTitleBar">
+  android:layout_height="match_parent">
 
-  <SearchView
-    android:id="@+id/Search_view"
-    android:layout_width="279dp"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="5dp"
-    android:layout_marginStart="0dp"
-    android:layout_alignParentStart="true"
-    android:layout_alignParentTop="true"
-    android:iconifiedByDefault="false"
-    android:queryHint="Search place"
-    android:searchIcon="@drawable/ic_search_black_24dp"
-    android:showAsAction="collapseActionView|ifRoom"/>
-  <Button
-    android:id="@+id/SCbutton"
-    android:layout_width="79dp"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="5dp"
-    android:layout_marginBottom="0dp"
-    android:layout_marginStart="0dp"
-    android:layout_marginEnd="5dp"
-    android:layout_alignBottom="@+id/Search_view"
-    android:layout_alignParentEnd="true"
-    android:layout_alignParentTop="true"
-    android:layout_toEndOf="@+id/Search_view"
-    android:text="@string/search"/>
-  <Button
-    android:id="@+id/btMark"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginBottom="5dp"
-    android:layout_marginEnd="5dp"
-    android:layout_alignEnd="@+id/map"
-    android:layout_alignParentBottom="true"
-    android:text="@string/add_marker"/>
-  <EditText
-    android:id="@+id/editText"
-    android:layout_width="216dp"
-    android:layout_height="wrap_content"
-    android:layout_marginBottom="5dp"
-    android:layout_marginStart="5dp"
-    android:layout_marginEnd="10dp"
-    android:layout_alignParentBottom="true"
-    android:layout_alignParentStart="true"
-    android:layout_toStartOf="@+id/btMark"
-    android:ems="10"
-    android:gravity="start|top"
-    android:hint="@string/InText"
-    android:inputType="textMultiLine"/>
   <fragment
     android:id="@+id/map"
     android:layout_width="match_parent"
-    android:layout_height="610dp"
-    android:layout_marginTop="0dp"
-    android:layout_marginBottom="10dp"
-    android:layout_marginStart="0dp"
-    android:layout_marginEnd="0dp"
-    android:layout_above="@+id/editText"
-    android:layout_alignParentEnd="true"
-    android:layout_alignParentStart="true"
-    android:layout_below="@+id/Search_view"
+    android:layout_height="match_parent"
     android:name="com.google.android.gms.maps.SupportMapFragment"
-    tools:context=".MapsActivity"/>
+    tools:layout_editor_absoluteX="-411dp"
+    tools:layout_editor_absoluteY="-100dp"/>
+
+  <ImageView
+    android:id="@+id/info_view"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    android:layout_marginEnd="10dp"
+    android:contentDescription="TODO"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/re_layout"
+    app:srcCompat="@android:drawable/ic_menu_info_details"/>
+
+  <ImageView
+    android:id="@+id/delete_view"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    android:layout_marginEnd="10dp"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/info_view"
+    app:srcCompat="@android:drawable/ic_menu_delete"/>
   <android.support.v7.widget.RecyclerView
     android:id="@+id/recycle_view"
-    android:layout_width="204dp"
-    android:layout_height="237dp"
-    android:layout_marginTop="0dp"
-    android:layout_marginStart="0dp"
-    android:layout_alignStart="@+id/map"
-    android:layout_alignTop="@+id/map"
-    android:visibility="gone"/>
-</RelativeLayout>
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    android:visibility="gone"
+    app:layout_constraintBottom_toTopOf="@+id/re_layout2"
+    app:layout_constraintEnd_toStartOf="@+id/map"
+    app:layout_constraintHorizontal_bias="0.0"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/re_layout"
+    app:layout_constraintVertical_bias="0.0"
+    tools:itemCount="15">
+  </android.support.v7.widget.RecyclerView>
+
+  <RelativeLayout
+    android:id="@+id/re_layout"
+    android:layout_width="wrap_content"
+    android:layout_height="60dp"
+    android:background="#fff"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.5"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
+
+    <EditText
+      android:id="@+id/Search_Text"
+      android:layout_width="320dp"
+      android:layout_height="80dp"
+      android:autofillHints=""
+      android:background="@null"
+      android:ems="10"
+      android:hint="@string/SText"
+      android:inputType="textMultiLine"
+      android:queryHint="Search place"
+      tools:targetApi="o"/>
+
+    <Button
+      android:id="@+id/SCbutton"
+      android:layout_width="90dp"
+      android:layout_height="match_parent"
+      android:layout_centerVertical="true"
+      android:layout_toEndOf="@+id/Search_Text"
+      android:text="@string/search"/>
+  </RelativeLayout>
+
+  <RelativeLayout
+    android:id="@+id/re_layout2"
+    android:layout_width="wrap_content"
+    android:layout_height="60dp"
+    android:layout_marginBottom="1dp"
+    android:background="#fff"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.5"
+    app:layout_constraintStart_toStartOf="parent">
+
+    <EditText
+      android:id="@+id/editText"
+      android:layout_width="260dp"
+      android:layout_height="70dp"
+      android:layout_marginStart="0dp"
+      android:layout_alignParentStart="true"
+      android:layout_toStartOf="@+id/btMark"
+      android:autofillHints=""
+      android:ems="10"
+      android:hint="@string/InText"
+      android:inputType=""
+      tools:targetApi="o"/>
+
+    <Button
+      android:id="@+id/btMark"
+      android:layout_width="120dp"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"
+      android:layout_alignParentEnd="true"
+      android:text="@string/add_marker"/>
+
+  </RelativeLayout>
+</android.support.constraint.ConstraintLayout>

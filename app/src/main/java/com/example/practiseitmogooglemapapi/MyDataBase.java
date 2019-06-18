@@ -29,4 +29,11 @@ public class MyDataBase extends SQLiteOpenHelper {
     db.execSQL("drop table if exists " + TABLE_NAME);
     onCreate(db);
   }
+
+  void onDelete(String string) {
+    SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+    sqLiteDatabase.execSQL("DELETE FROM " + TABLE_NAME + " WHERE " + KEY_SNIPPET + "=?",
+        new String[]{String.valueOf(string)});
+    sqLiteDatabase.close();
+  }
 }

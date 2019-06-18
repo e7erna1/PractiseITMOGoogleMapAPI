@@ -18,21 +18,24 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.SearchView;
+import android.widget.ImageView;
 import android.widget.Toast;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import java.util.ArrayList;
 
-public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback,
+    OnMarkerClickListener {
 
   private static boolean access = false;
   private static final int acessCode = 1234;
@@ -46,8 +49,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
 
   private EditText editText;
-  private SearchView Search_view;
+  Marker mmarker;
   private MyDataBase myDataBase;
+  private EditText Search_Text;
+  private ImageView InfoView, DeleteView;
 
   RecyclerView recyclerView;
 
@@ -59,6 +64,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_map);
+    InfoView = findViewById(R.id.info_view);
+    DeleteView = findViewById(R.id.delete_view);
     getLocationAcess();
   }
 
@@ -100,6 +107,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
       }
       gMap.setMyLocationEnabled(true);
     }
+
     LatLng latLng;
     myDataBase = new MyDataBase(this);
     SQLiteDatabase sqLiteDatabase = myDataBase.getWritableDatabase();
@@ -123,6 +131,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         myLatlng = latLng;
       }
     });
+
     Button markBt = findViewById(R.id.btMark);
     editText = findViewById(R.id.editText);
     markBt.setOnClickListener(new View.OnClickListener() {
@@ -141,13 +150,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     });
 
     Button SCbutton = findViewById(R.id.SCbutton);
-    Search_view = findViewById(R.id.Search_view);
+    Search_Text = findViewById(R.id.Search_Text);
     SCbutton.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
         SQLiteDatabase sqLiteDatabase = myDataBase.getWritableDatabase();
-        String scSnipper = "%" + Search_view.getQuery().toString() + "%";
-        System.out.println(scSnipper);
+        String scSnipper = "%" + Search_Text.getText().toString() + "%";
 
         recyclerView = findViewById(R.id.recycle_view);
         recyclerView.setVisibility(View.VISIBLE);
@@ -187,6 +195,28 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
       }
     });
+
+    gMap.setOnMarkerClickListener(this);
+
+    InfoView.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        if (mmarker.isInfoWindowShown()) {
+          mmarker.hideInfoWindow();
+        } else {
+          mmarker.showInfoWindow();
+        }
+      }
+    });
+
+    DeleteView.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        myDataBase.onDelete(mmarker.getSnippet());
+        mmarker.remove();
+      }
+    });
+
   }
 
   private void getLocationAcess() {
@@ -231,11 +261,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         });
       }
     } catch (SecurityException ignored) {
+
     }
   }
 
   private void moveCamera(LatLng latLng) {
     gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, (float) 15.0));
+    gMap.setInfoWindowAdapter(new InfoWindowAdapter(MapActivity.this));
   }
 
   @Override
@@ -253,5 +285,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         initMap();
       }
     }
+  }
+
+  @Override
+  public boolean onMarkerClick(Marker marker) {
+    mmarker = marker;
+    return false;
   }
 }

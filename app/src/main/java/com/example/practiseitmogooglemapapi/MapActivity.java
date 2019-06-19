@@ -49,7 +49,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
 
   private EditText editText;
-  Marker mmarker;
+  private Marker mmarker = null;
   private MyDataBase myDataBase;
   private EditText Search_Text;
   private ImageView InfoView, DeleteView;
@@ -119,7 +119,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
       int Snippet = cursor.getColumnIndex(MyDataBase.KEY_SNIPPET);
       do {
         latLng = new LatLng(cursor.getDouble(latitude), cursor.getDouble(longitude));
-        gMap.addMarker(new MarkerOptions().position(latLng).title("New Marker.")
+        gMap.addMarker(new MarkerOptions().position(latLng).title("Marker from DB.")
             .snippet(cursor.getString(Snippet)));
       } while (cursor.moveToNext());
       cursor.close();
@@ -139,7 +139,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
       public void onClick(View view) {
         SQLiteDatabase sqLiteDatabase = myDataBase.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        gMap.addMarker(new MarkerOptions().position(myLatlng).title("This is new Marker.")
+        gMap.addMarker(new MarkerOptions().position(myLatlng).title("New marker.")
             .snippet(editText.getText().toString()));
         contentValues.put(MyDataBase.KEY_LATITUDE, myLatlng.latitude);
         contentValues.put(MyDataBase.KEY_LONGITUDE, myLatlng.longitude);
@@ -201,10 +201,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     InfoView.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
-        if (mmarker.isInfoWindowShown()) {
-          mmarker.hideInfoWindow();
-        } else {
-          mmarker.showInfoWindow();
+        if (mmarker != null) {
+          if (mmarker.isInfoWindowShown()) {
+            mmarker.hideInfoWindow();
+          } else {
+            mmarker.showInfoWindow();
+          }
         }
       }
     });
@@ -212,8 +214,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     DeleteView.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
-        myDataBase.onDelete(mmarker.getSnippet());
-        mmarker.remove();
+        if (mmarker != null) {
+          myDataBase.onDelete(mmarker.getSnippet());
+          mmarker.remove();
+        }
       }
     });
 
